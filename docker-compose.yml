@@ -1,0 +1,35 @@
+version: '2.23.3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: database
+    networks:
+      - mynetwork
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: docker-phpmyadmin
+    networks:
+      - mynetwork
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+    depends_on:
+      - mysql
+
+  web:
+    image: php:7.2-apache
+    container_name: docker-php
+    networks:
+      - mynetwork
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+    links:
+      - mysql
+networks:
+  mynetwork:
